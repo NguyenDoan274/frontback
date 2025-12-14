@@ -15,7 +15,7 @@ try {
 
 // 3. Lấy dữ liệu và trả về JSON
 try {
-    $stmt = $pdo->prepare("SELECT ma_sach, ten_sach, gia FROM sach LIMIT 5");
+    $stmt = $pdo->prepare("SELECT id, tittle, price FROM books LIMIT 5");
     $stmt->execute();
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
