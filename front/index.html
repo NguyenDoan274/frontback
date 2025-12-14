@@ -29,9 +29,9 @@
                 data.forEach(book => {
                     const html = `
                         <div class="book-item">
-                            <h3>${book.ten_sach}</h3>
-                            <p>Mã: ${book.ma_sach}</p>
-                            <p class="price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.gia)}</p>
+                            <h3>${book.id}</h3>
+                            <p>Mã: ${book.title}</p>
+                            <p class="price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price)}</p>
                         </div>
                     `;
                     listDiv.innerHTML += html;
