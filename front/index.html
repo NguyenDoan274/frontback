@@ -4,43 +4,62 @@
     <meta charset="UTF-8">
     <title>Bookstore Frontend</title>
     <style>
-        .book-item { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 5px; }
-        .price { color: red; font-weight: bold; }
+        .book-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .price {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Danh sách sách (Load từ API)</h1>
-    <div id="book-list">Đang tải dữ liệu...</div>
+<h1>Danh sách sách (Load từ API)</h1>
+<div id="book-list">Đang tải dữ liệu...</div>
 
-    <script>
-        // Đường dẫn tới file PHP ở server bên kia
-        
-        const API_URL = 'https://nguyenbackend.free.nf/get_books.php';
+<script>
+const API_URL = 'https://nguyenbackend.free.nf/get_books.php';
 
-        // Gọi dữ liệu
-        fetch(API_URL)
-            .then(response => response.json()) // Chuyển kết quả về JSON
-            .then(data => {
-                const listDiv = document.getElementById('book-list');
-                listDiv.innerHTML = ''; // Xóa chữ "Đang tải..."
+fetch(API_URL)
+    .then(res => res.json())
+    .then(result => {
+        const listDiv = document.getElementById('book-list');
+        listDiv.innerHTML = '';
 
-                // Duyệt qua từng quyển sách và vẽ HTML
-                data.forEach(book => {
-                    const html = `
-                        <div class="book-item">
-                            <h3>${book.id}</h3>
-                            <p>Mã: ${book.title}</p>
-                            <p class="price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price)}</p>
-                        </div>
-                    `;
-                    listDiv.innerHTML += html;
-                });
-            })
-            .catch(error => {
-                console.error('Lỗi:', error);
-                document.getElementById('book-list').innerText = 'Không thể kết nối tới Server Backend.';
-            });
-    </script>
+        // ✅ Trường hợp API trả { status, data }
+        const books = result.data ?? result;
+
+        if (!Array.isArray(books)) {
+            listDiv.innerText = 'Dữ liệu không hợp lệ';
+            return;
+        }
+
+        books.forEach(book => {
+            const html = `
+                <div class="book-item">
+                    <h3>${book.title}</h3>
+                    <p>Mã sách: ${book.id}</p>
+                    <p class="price">
+                        ${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(book.price)}
+                    </p>
+                </div>
+            `;
+            listDiv.insertAdjacentHTML('beforeend', html);
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('book-list').innerText =
+            'Không thể kết nối tới Server Backend.';
+    });
+</script>
+
 </body>
 </html>
