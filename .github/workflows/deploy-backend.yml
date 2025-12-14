@@ -19,3 +19,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         # Đường dẫn trên host muốn lưu code (thường là public_html)
         server-dir: /nguyenbackend.free.nf/htdocs/
+        local-dir: ./api/
