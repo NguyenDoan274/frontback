@@ -13,10 +13,12 @@ jobs:
 
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
+      with: 
         server: ${{ secrets.BACK_FTP_SERVER }}
         username: ${{ secrets.BACK_FTP_USERNAME }}
         password: ${{ secrets.BACK_FTP_PASSWORD }}
+        protocol: ftps
+        port: 21
         # Đường dẫn trên host muốn lưu code (thường là public_html)
         server-dir: /domains/bookstore.doanlehoangnguyen.id.vn/
         local-dir: ./api/
