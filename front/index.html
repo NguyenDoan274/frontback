@@ -2,64 +2,104 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Bookstore Frontend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Sách (Tối Ưu)</title>
     <style>
-        .book-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
         }
-        .price {
-            color: red;
-            font-weight: bold;
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #book-list {
+            list-style-type: none;
+            padding: 0;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .book-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .book-item strong {
+            color: #0056b3;
+        }
+        #loading {
+            text-align: center;
+            font-size: 1.2em;
+            color: #555;
+        }
+        #error {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d9534f;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<h1>Danh sách sách (Load từ API)</h1>
-<div id="book-list">Đang tải dữ liệu...</div>
+    <h1>📚 Danh Sách Sách Lấy từ API 📚</h1>
 
-<script>
-const API_URL = 'https://nguyenbackend.free.nf/get_books.php';
+    <div id="loading">Đang tải dữ liệu...</div>
+    <div id="error">Không thể tải dữ liệu. Vui lòng kiểm tra lại URL.</div>
 
-fetch(API_URL)
-    .then(res => res.json())
-    .then(result => {
-        const listDiv = document.getElementById('book-list');
-        listDiv.innerHTML = '';
+    <ul id="book-list">
+        </ul>
 
-        // ✅ Trường hợp API trả { status, data }
-        const books = result.data ?? result;
+    <script>
+        const url = 'https://bookstore.doanlehoangnguyen.id.vn/get_books.php';
+        const bookList = document.getElementById('book-list');
+        const loading = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
 
-        if (!Array.isArray(books)) {
-            listDiv.innerText = 'Dữ liệu không hợp lệ';
-            return;
+        async function fetchBooks() {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                const books = await response.json();
+                
+                loading.style.display = 'none';
+
+                if (Array.isArray(books) && books.length > 0) {
+                    books.forEach(book => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('book-item');
+                        
+                        // Sử dụng CHÍNH XÁC các key: id, title, price
+                        const bookContent = `
+                            <strong>ID:</strong> ${book.id || 'N/A'}<br>
+                            <strong>Tiêu đề:</strong> ${book.title || 'Không có tiêu đề'}<br>
+                            <strong>Giá:</strong> ${book.price ? Number(book.price).toLocaleString('vi-VN') + ' VNĐ' : 'N/A'}
+                        `;
+
+                        listItem.innerHTML = bookContent;
+                        bookList.appendChild(listItem);
+                    });
+                } else {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = 'Không tìm thấy cuốn sách nào trong dữ liệu.';
+                    bookList.appendChild(listItem);
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi fetch data:', error);
+                loading.style.display = 'none';
+                errorDiv.style.display = 'block';
+            }
         }
 
-        books.forEach(book => {
-            const html = `
-                <div class="book-item">
-                    <h3>${book.title}</h3>
-                    <p>Mã sách: ${book.id}</p>
-                    <p class="price">
-                        ${new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND'
-                        }).format(book.price)}
-                    </p>
-                </div>
-            `;
-            listDiv.insertAdjacentHTML('beforeend', html);
-        });
-    })
-    .catch(err => {
-        console.error(err);
-        document.getElementById('book-list').innerText =
-            'Không thể kết nối tới Server Backend.';
-    });
-</script>
+        fetchBooks();
+    </script>
 
 </body>
 </html>

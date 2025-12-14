@@ -1,6 +1,7 @@
 <?php
 // 1. CHO PHÉP TÊN MIỀN KHÁC GỌI VÀO (QUAN TRỌNG NHẤT) - CORS
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://nguyenfrontend.free.nf");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
