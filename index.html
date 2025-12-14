@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookstore Frontend</title>
+    <style>
+        .book-item { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 5px; }
+        .price { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Danh sách sách (Load từ API)</h1>
+    <div id="book-list">Đang tải dữ liệu...</div>
+
+    <script>
+        // Đường dẫn tới file PHP ở server bên kia
+        const API_URL = 'http://backend-api.com/api/get_books.php';
+
+        // Gọi dữ liệu
+        fetch(API_URL)
+            .then(response => response.json()) // Chuyển kết quả về JSON
+            .then(data => {
+                const listDiv = document.getElementById('book-list');
+                listDiv.innerHTML = ''; // Xóa chữ "Đang tải..."
+
+                // Duyệt qua từng quyển sách và vẽ HTML
+                data.forEach(book => {
+                    const html = `
+                        <div class="book-item">
+                            <h3>${book.ten_sach}</h3>
+                            <p>Mã: ${book.ma_sach}</p>
+                            <p class="price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.gia)}</p>
+                        </div>
+                    `;
+                    listDiv.innerHTML += html;
+                });
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                document.getElementById('book-list').innerText = 'Không thể kết nối tới Server Backend.';
+            });
+    </script>
+</body>
+</html>
